@@ -60,6 +60,6 @@ class DecoderLM(nn.Module):
         )
 
         if self.norm is not None:
-            hidden_states = self.norm(hidden_states)
+            hidden_states = (self.norm(hidden_states[0]), )
 
         return hidden_states
