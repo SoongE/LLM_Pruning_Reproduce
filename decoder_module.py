@@ -58,8 +58,10 @@ class DecoderLM(nn.Module):
             cache_position=None,
             position_embeddings=position_embeddings,
         )
+        if isinstance(hidden_states, tuple):
+            hidden_states = hidden_states[0]
 
         if self.norm is not None:
-            hidden_states = (self.norm(hidden_states[0]), )
+            hidden_states = self.norm(hidden_states)
 
         return hidden_states
