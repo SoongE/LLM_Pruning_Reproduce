@@ -7,9 +7,9 @@ from torch.utils.data import DataLoader
 from transformers import AutoModelForCausalLM, AutoConfig
 from transformers.trainer_pt_utils import get_model_param_count
 
-from ..decoder_module import DecoderLM
-from ..sharded_dataset import SafeTensorShards
-from ..utils import DictDataset, get_layer_number, load_state_dict
+from decoder_module import DecoderLM
+from sharded_dataset import SafeTensorShards
+from utils import DictDataset, get_layer_number, load_state_dict
 
 
 def make_streamline_layer(config_name, config, best_layer):

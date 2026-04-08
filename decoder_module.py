@@ -49,7 +49,7 @@ class DecoderLM(nn.Module):
     def forward(self, hidden_states):
         position_embeddings = self.rotary_emb(hidden_states, self.position_ids)
 
-        layer_outputs = self.decoder_layer(
+        hidden_states = self.decoder_layer(
             hidden_states,
             attention_mask=None,
             position_ids=self.position_ids,
@@ -60,6 +60,6 @@ class DecoderLM(nn.Module):
         )
 
         if self.norm is not None:
-            layer_outputs = (self.norm(layer_outputs[0]),)
+            hidden_states = self.norm(hidden_states)
 
-        return layer_outputs
+        return hidden_states

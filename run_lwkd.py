@@ -227,7 +227,6 @@ def main():
             y = item['output_features']
             with accelerator.accumulate(model):
                 out_features = model(x)
-                out_features = out_features[0]
                 loss = criterion(out_features, y.to(torch.float32))
                 accelerator.backward(loss)
                 if accelerator.sync_gradients:

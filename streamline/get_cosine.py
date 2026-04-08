@@ -1,5 +1,6 @@
 import torch
-from safetensors.torch import load_file
+from datasets import load_from_disk
+from torch.utils.data import DataLoader
 from tqdm import tqdm
 from transformers import AutoModelForCausalLM, AutoConfig
 
@@ -27,20 +28,15 @@ def average_similarity(layer_cosine_similarity):
 
 
 @torch.no_grad()
-def get_cosine_similarity(model, dataset, num_data, device, layer_intervals, num_layer):
-    assert len(dataset) > num_data
+def get_cosine_similarity(model, loader, device, layer_intervals, num_layer):
     hidden_states_list = []
-    data_index = torch.randperm(len(dataset))[:num_data]
-    dataset = dataset[data_index]
 
-    for input_ids in tqdm(dataset, desc="Collecting hidden states"):
-        input_ids = input_ids.unsqueeze(0).to(device)
-
-        hidden_states = model(input_ids, output_hidden_states=True).hidden_states
+    for batch in tqdm(loader, desc="Collecting hidden states"):
+        hidden_states = model(batch['input_ids'], output_hidden_states=True).hidden_states
         hidden_states = [h.cpu() for h in hidden_states]
         hidden_states_list.append(hidden_states)
 
-        del input_ids
+        del batch
 
     cosine_similarity = [[] for _ in range(num_layer - layer_intervals + 1)]
 
@@ -51,7 +47,7 @@ def get_cosine_similarity(model, dataset, num_data, device, layer_intervals, num
                 hidden_states_list[i][j + layer_intervals][0],
                 device
             )
-            similarity = torch.trace(cosine) / cosine.size(0)
+            similarity = torch.trace(cosine.to(torch.float)) / cosine.size(0)
             cosine_similarity[j].append(similarity.item())
             del cosine
 
@@ -76,15 +72,19 @@ def get_cosine_similarity(model, dataset, num_data, device, layer_intervals, num
 
 
 if __name__ == '__main__':
-    config_name = 'meta-llama/Llama-3.1-8B'
-    # config_name = 'meta-llama/Llama-2-13b-hf'
+    config_name = 'Qwen/Qwen3-8B-Base'
     config = AutoConfig.from_pretrained(config_name)
-    model = AutoModelForCausalLM.from_pretrained(config_name, device_map='auto')
-    ds = load_file('data/finewebedu_llama3-8b_train/input_ids.safetensors')['hidden_states']
 
     num_samples = 50
-    layer_intervals = 18
+    layer_intervals = 22
     num_hidden_layers = config.num_hidden_layers
     device = torch.device('cuda:0')
 
-    get_cosine_similarity(model, ds, num_samples, device, layer_intervals, num_hidden_layers)
+    model = AutoModelForCausalLM.from_pretrained(config_name, device_map=device)
+    model.eval()
+
+    ds = load_from_disk('data/tokenized/finewebedu_qwen3_train')
+    ds = ds.with_format("torch", device=device).shuffle(42).select(range(num_samples))
+    dl = DataLoader(ds, batch_size=1, shuffle=False, drop_last=False)
+
+    get_cosine_similarity(model, dl, device, layer_intervals, num_hidden_layers)

@@ -12,23 +12,30 @@ backbone_dict = {
     'v2-13b': 'lmsys/vicuna-13b-v1.5',
     '3-3b': 'meta-llama/Llama-3.2-3B',
     '3-8b': 'meta-llama/Llama-3.1-8B',
+    "q3-4b": "Qwen/Qwen3-4B-Base",
+    "q3-8b": "Qwen/Qwen3-8B-Base",
 }
-GPUs = '0,1,2,3,4,5,6,7'
+
+GPUs = '7'
 STREAMLINE_RUNNING_COMMANDS = [
     # STREAMLINE 25%
-    ('--streamline --epoch 20 --best-layer 21 --layer-interval 8 ', 'Streamline_Llama2-7B_interval8', '2-7b'),
-    ('--streamline --epoch 20 --best-layer 26 --layer-interval 10 ', 'Streamline_Llama2-13B_interval10', '2-13b'),
-    ('--streamline --epoch 20 --best-layer 17 --layer-interval 9 ', 'Streamline_Llama3-3B_interval9', '3-3b'),
-    ('--streamline --epoch 20 --best-layer 21 --layer-interval 9 ', 'Streamline_Llama3-8B_interval9', '3-8b'),
+    # ('--streamline --epoch 20 --best-layer 21 --layer-interval 8 ', 'Streamline_Llama2-7B_interval8', '2-7b'),
+    # ('--streamline --epoch 20 --best-layer 26 --layer-interval 10 ', 'Streamline_Llama2-13B_interval10', '2-13b'),
+    # ('--streamline --epoch 20 --best-layer 17 --layer-interval 9 ', 'Streamline_Llama3-3B_interval9', '3-3b'),
+    # ('--streamline --epoch 20 --best-layer 21 --layer-interval 9 ', 'Streamline_Llama3-8B_interval9', '3-8b'),
+    ('--streamline --epoch 20 --best-layer 20 --layer-interval 11 ', 'Streamline_Qwen3-4B_interval11', 'q3-4b'),
+    ('--streamline --epoch 20 --best-layer 13 --layer-interval 11 ', 'Streamline_Qwen3-8B_interval11', 'q3-8b'),
     # STREAMLINE 50%
-    ('--streamline --epoch 20 --best-layer 8 --layer-interval 16 ', 'Streamline_Llama2-7B_interval16', '2-7b'),
-    ('--streamline --epoch 20 --best-layer 18 --layer-interval 20 ', 'Streamline_Llama2-13B_interval20', '2-13b'),
-    ('--streamline --epoch 20 --best-layer 3 --layer-interval 16 ', 'Streamline_Llama3-3B_interval16', '3-3b'),
-    ('--streamline --epoch 20 --best-layer 3 --layer-interval 18 ', 'Streamline_Llama3-8B_interval18', '3-8b'),
+    # ('--streamline --epoch 20 --best-layer 8 --layer-interval 16 ', 'Streamline_Llama2-7B_interval16', '2-7b'),
+    # ('--streamline --epoch 20 --best-layer 18 --layer-interval 20 ', 'Streamline_Llama2-13B_interval20', '2-13b'),
+    # ('--streamline --epoch 20 --best-layer 3 --layer-interval 16 ', 'Streamline_Llama3-3B_interval16', '3-3b'),
+    # ('--streamline --epoch 20 --best-layer 3 --layer-interval 18 ', 'Streamline_Llama3-8B_interval18', '3-8b'),
+    ('--streamline --epoch 20 --best-layer 13 --layer-interval 22 ', 'Streamline_Qwen3-4B_interval22', 'q3-4b'),
+    ('--streamline --epoch 20 --best-layer 13 --layer-interval 22 ', 'Streamline_Qwen3-8B_interval22', 'q3-8b'),
 ]
 commands = [
     (f"python run_lwkd.py --config_name {backbone_dict[backbone]} "
-     f"--dataset data/finewebedu_llama{backbone}_manifest --criterion mse --wandb "
+     f"--dataset data/finewebedu_qwen{backbone.replace('q','')}_manifest --criterion mse --wandb "
      f"{config} --name {name}")
     for config, name, backbone in STREAMLINE_RUNNING_COMMANDS
 ]
