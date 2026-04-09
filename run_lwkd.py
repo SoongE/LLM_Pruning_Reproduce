@@ -264,7 +264,6 @@ def main():
             y = item['output_features']
             with torch.no_grad():
                 out_features = model(x)
-                out_features = out_features[0]
                 loss = criterion(out_features, y.to(torch.float32))
             losses.update(loss)
         if info_args.wandb: wandb.log({'val_loss': losses.compute().item()})
