@@ -148,6 +148,8 @@ def main(
         streamline: Annotated[bool, Option(help='Whether to streamline')] = False,
         best_layer: Annotated[int, Option(help='Which layer of model to use')] = None,
         layer_interval: Annotated[int, Option(help='Number of intervals to merge')] = None,
+        # Fake Parameters
+        epoch: Annotated[int, Option(help='')] = None,
 
 ):
     if mixed_precision is None:

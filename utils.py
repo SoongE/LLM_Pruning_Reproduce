@@ -21,8 +21,8 @@ def load_state_dict(name, tie_word_embeddings=False):
         'meta-llama/Llama-3.1-8B': f'{HOME}/.cache/huggingface/hub/models--meta-llama--Llama-3.1-8B/snapshots/d04e592bb4f6aa9cfee91e2e20afa771667e1d4b',
         'lmsys/vicuna-7b-v1.3': f'{HOME}/.cache/huggingface/hub/models--lmsys--vicuna-7b-v1.3/snapshots/236eeeab96f0dc2e463f2bebb7bb49809279c6d6',
         'lmsys/vicuna-13b-v1.5': f'',
-        'qwen3-4B': f'{HOME}/.cache/huggingface/hub/models--Qwen--Qwen3-4B-Base/snapshots/906bfd4b4dc7f14ee4320094d8b41684abff8539',
-        'qwen3-8B': f'{HOME}/.cache/huggingface/hub/models--Qwen--Qwen3-8B-Base/snapshots/49e3418fbbbca6ecbdf9608b4d22e5a407081db4'
+        'Qwen/Qwen3-4B-Base': f'{HOME}/.cache/huggingface/hub/models--Qwen--Qwen3-4B-Base/snapshots/906bfd4b4dc7f14ee4320094d8b41684abff8539',
+        'Qwen/Qwen3-8B-Base': f'{HOME}/.cache/huggingface/hub/models--Qwen--Qwen3-8B-Base/snapshots/49e3418fbbbca6ecbdf9608b4d22e5a407081db4'
     }
 
     snapshot_dir = Path(MODEL_MAPPING[name])
