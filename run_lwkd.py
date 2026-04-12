@@ -92,6 +92,7 @@ class StreamlineArguments:
     streamline: bool = field(default=False, metadata={"help": "Whether to streamline"})
     best_layer: int = field(default=None, metadata={"help": "Which layer of model to use"})
     layer_intervals: int = field(default=None, metadata={"help": "Number of intervals to merge"})
+    num_layer: int = field(default=1, metadata={"help": "Which layer of model to use"})
 
 
 def main():
@@ -129,7 +130,7 @@ def main():
     training_args.torch_dtype = torch_dtype
 
     if streamline_args.streamline:
-        model = make_streamline_layer(model_args.config_name, config, streamline_args.best_layer)
+        model = make_streamline_layer(model_args.config_name, config, streamline_args.best_layer, streamline_args.layer_intervals, streamline_args.num_layer)
         training_args.target_layer = streamline_args.best_layer
     else:
         raise ValueError(f'Supported reproduce model is not selected.')

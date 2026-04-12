@@ -12,8 +12,8 @@ from sharded_dataset import SafeTensorShards
 from utils import DictDataset, get_layer_number, load_state_dict
 
 
-def make_streamline_layer(config_name, config, best_layer):
-    layer = DecoderLM(config_name, config, best_layer, 1024)
+def make_streamline_layer(config_name, config, best_layer, layer_interval, num_layer):
+    layer = DecoderLM(config_name, config, best_layer, layer_interval, num_layer, 1024)
     return layer
 
 
