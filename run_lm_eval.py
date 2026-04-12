@@ -2,6 +2,8 @@ import os
 from datetime import timedelta
 from typing import Annotated
 
+from peft import PeftModel
+
 from streamline.utils import make_streamline_deploy
 
 os.environ["HF_ALLOW_CODE_EVAL"] = "1"
@@ -107,6 +109,7 @@ def main(
         model_name: Annotated[str, Argument(help="Name of transformers model or your custom model)")],
         tasks: Annotated[str, Argument(help="Comma-separated list of tasks to evaluate on.")],
         # Model Parameters
+        adapter: Annotated[bool, Option(help="Use PEFT adapter", rich_help_panel=HELP_PANEL_NAME_2)] = False,
         attn: Annotated[
             str, Option(
                 help="Attention mechanism for transformers models. Select ['eager', 'sdpa', 'flash_attention_2'].",
@@ -175,6 +178,12 @@ def main(
 
     if streamline:
         model = make_streamline_deploy(model_name, best_layer, layer_interval, checkpoint)
+    elif adapter:
+        backbone_checkpoint = os.path.join(checkpoint, 'pruned_base')
+        adapter_checkpoint = os.path.join(checkpoint, 'adapter')
+        model = AutoModelForCausalLM.from_pretrained(backbone_checkpoint, torch_dtype=dtype, attn_implementation=attn,
+                                                     **parallel_kwargs)
+        model = PeftModel.from_pretrained(model, adapter_checkpoint).merge_and_unload()
     else:
         model = AutoModelForCausalLM.from_pretrained(
             model_name,
